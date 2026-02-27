@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions & Discussions
+    url: https://github.com/microrepar/cookiecutter-ralph-devcontainer/discussions
+    about: Please ask and discuss questions in GitHub Discussions
+  - name: Cookiecutter Documentation
+    url: https://cookiecutter.readthedocs.io/
+    about: Read the cookiecutter documentation

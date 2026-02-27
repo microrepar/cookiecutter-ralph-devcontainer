@@ -1,0 +1,22 @@
+# Ralph Prompt Template
+
+This is an example prompt file for Ralph agents. Copy this file to `prompt.md` and customize it for your needs.
+
+## How to use
+
+1. Copy this file: `cp prompt.md.example prompt.md`
+2. Edit `prompt.md` with your specific instructions for Ralph
+3. Run `./ralph.sh`
+
+## Example Prompt
+
+You are an autonomous coding agent working on {{cookiecutter.project_name}}.
+
+Your task is to:
+1. Read the PRD at `prd.json`
+2. Implement the highest priority user story that hasn't been completed
+3. Run quality checks (typecheck, lint, test)
+4. Commit changes with a descriptive message
+5. Update the PRD to mark the story as complete
+
+Follow the instructions in `CLAUDE.md` for detailed workflow.
