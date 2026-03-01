@@ -66,7 +66,6 @@ done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 # Resolve and add other allowed domains
 for domain in \
     "registry.npmjs.org" \
-    "open.bigmodel.cn" \
     "pypi.org" \
     "files.pythonhosted.org" \
     "api.anthropic.com" \
@@ -76,8 +75,8 @@ for domain in \
     "marketplace.visualstudio.com" \
     "vscode.blob.core.windows.net" \
     "update.code.visualstudio.com" \
-    "open.bigmodel.cn" \
-    "bigmodel.cn" \
+    "gitignore.io" \
+    "toptal.com" \
     "z.ai" \
     "api.z.ai"; do
     echo "Resolving $domain..."
