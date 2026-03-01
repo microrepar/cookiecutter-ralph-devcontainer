@@ -25,8 +25,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   vim \
   curl \
   wget \
+  locales \
   ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configure locale for Brazil
+RUN sed -i 's/# pt_BR.UTF-8 UTF-8/pt_BR.UTF-8 UTF-8/' /etc/locale.gen && \
+  locale-gen pt_BR.UTF-8 && \
+  update-locale LANG=pt_BR.UTF-8 LANGUAGE=pt_BR:pt LC_ALL=pt_BR.UTF-8
+
+ENV LANG=pt_BR.UTF-8
+ENV LANGUAGE=pt_BR:pt
+ENV LC_ALL=pt_BR.UTF-8
 
 # Install Docker CLI (for Docker-in-Docker support)
 RUN install -m 0755 -d /etc/apt/keyrings && \
