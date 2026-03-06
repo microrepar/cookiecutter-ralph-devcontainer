@@ -96,9 +96,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
 RUN pip install --no-cache-dir --upgrade pip && \
   pip install --no-cache-dir pipx && \
   pipx ensurepath && \
-  pip install --no-cache-dir ignr && \
-  pip install --no-cache-dir poetry && \
-  pip install --no-cache-dir virtualenv
+  pip install --no-cache-dir ignr
 
 # Set up non-root user
 USER {{cookiecutter.container_user}}
@@ -125,6 +123,9 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # Install Claude
 RUN curl -fsSL https://claude.ai/install.sh | bash
+
+# Install UV (Python task runner) 
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Copy and set up firewall and docker scripts
 COPY init-firewall.sh /usr/local/bin/

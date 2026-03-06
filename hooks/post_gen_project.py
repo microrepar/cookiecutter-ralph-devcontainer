@@ -96,7 +96,7 @@ def main():
 
     make_scripts_executable()
     rename_example_files()
-    initialize_git()
+    # initialize_git()
     print_success_message()
 
 

@@ -57,13 +57,10 @@ run_test "pipx is installed" "pipx --version"
 PIPX_VERSION=$(pipx --version 2>&1 || true)
 echo "   pipx: ${PIPX_VERSION:-not found}"
 
-run_test "poetry is installed" "poetry --version"
-POETRY_VERSION=$(poetry --version 2>&1 || true)
-echo "   poetry: ${POETRY_VERSION:-not found}"
+run_test "uv is installed" "uv --version"
+UV_VERSION=$(uv --version 2>&1 || true)
+echo "   uv: ${UV_VERSION:-not found}"
 
-run_test "virtualenv is installed" "virtualenv --version"
-VIRTUALENV_VERSION=$(virtualenv --version 2>&1 || true)
-echo "   virtualenv: ${VIRTUALENV_VERSION:-not found}"
 
 # 4. VS Code Python interpreter
 echo ""
@@ -114,14 +111,14 @@ fi
 if docker info > /dev/null 2>&1; then
     pass "Can communicate with Docker daemon on host"
     # Try to get Docker Desktop/Engine info
-{% raw %}
+
     DOCKER_INFO=$(docker info --format '{{.ServerVersion}}' 2>&1 || true)
-{% endraw %}
+
     echo "   Docker Server: ${DOCKER_INFO:-unknown}"
     # Check if running on Docker Desktop
-{% raw %}
+
     if docker info --format '{{.OperatingSystem}}' 2>/dev/null | grep -qi "desktop"; then
-{% endraw %}
+
         echo "   Running on Docker Desktop"
     fi
 else
