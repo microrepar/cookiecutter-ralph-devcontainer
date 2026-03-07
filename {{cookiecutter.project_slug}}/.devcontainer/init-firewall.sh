@@ -75,6 +75,9 @@ for domain in \
     "marketplace.visualstudio.com" \
     "vscode.blob.core.windows.net" \
     "update.code.visualstudio.com" \
+    "context7.io" \
+    "api.context7.io" \
+    "cdn.context7.io" \
     "astral.sh" \
     "gitignore.io" \
     "toptal.com" \
