@@ -111,14 +111,14 @@ fi
 if docker info > /dev/null 2>&1; then
     pass "Can communicate with Docker daemon on host"
     # Try to get Docker Desktop/Engine info
-
+{% raw %}
     DOCKER_INFO=$(docker info --format '{{.ServerVersion}}' 2>&1 || true)
-
+{% endraw %}
     echo "   Docker Server: ${DOCKER_INFO:-unknown}"
     # Check if running on Docker Desktop
-
+{% raw %}
     if docker info --format '{{.OperatingSystem}}' 2>/dev/null | grep -qi "desktop"; then
-
+{% endraw %}
         echo "   Running on Docker Desktop"
     fi
 else

@@ -95,6 +95,14 @@ for domain in \
         echo "Adding $ip for $domain"
         # Added -exist to ignore duplicates
         ipset add -exist allowed-domains "$ip"
+
+        # Special case: Add files.pythonhosted.org IPs to /etc/hosts to fix IPv6 DNS issues with uv/pip
+        if [ "$domain" = "files.pythonhosted.org" ]; then
+            if ! grep -q "^$ip.*files.pythonhosted.org" /etc/hosts; then
+                echo "$ip files.pythonhosted.org" >> /etc/hosts
+                echo "Added $ip to /etc/hosts for $domain"
+            fi
+        fi
     done < <(echo "$ips")
 done
 

@@ -93,10 +93,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
   rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
 
 # Install Python development tools
-RUN pip install --no-cache-dir --upgrade pip && \
-  pip install --no-cache-dir pipx && \
-  pipx ensurepath && \
-  pip install --no-cache-dir ignr
+RUN pip install --no-cache-dir --upgrade pip
 
 # Set up non-root user
 USER {{cookiecutter.container_user}}
@@ -124,8 +121,12 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 # Install Claude
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
-# Install UV (Python task runner) 
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ # Install UV (Python task runner) and tools
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    uv tool install ignr && \
+    uv tool install cookiecutter --force && \
+    uv tool install poetry && \
+    uv tool install pipx
 
 # Copy and set up firewall and docker scripts
 COPY init-firewall.sh /usr/local/bin/
