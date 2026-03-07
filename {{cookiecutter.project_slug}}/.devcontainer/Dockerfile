@@ -1,4 +1,4 @@
-FROM python:{{cookiecutter.python_version}}-slim
+FROM python:3.13-slim
 
 ARG TZ
 ENV TZ=${TZ}
@@ -56,20 +56,20 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
   apt-get install -y nodejs && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# --- Create {{cookiecutter.container_user}} user ---
-RUN groupadd --gid 1000 {{cookiecutter.container_user}} \
-    && useradd --uid 1000 --gid {{cookiecutter.container_user}} --shell /bin/bash --create-home {{cookiecutter.container_user}}
+# --- Create codata user ---
+RUN groupadd --gid 1000 codata \
+    && useradd --uid 1000 --gid codata --shell /bin/bash --create-home codata
 
 # --- Configure docker group for Docker-in-Docker ---
-ARG DOCKER_GID={{cookiecutter.docker_gid}}
+ARG DOCKER_GID=1001
 RUN groupadd --gid ${DOCKER_GID} docker || true \
-    && usermod -aG docker {{cookiecutter.container_user}}
+    && usermod -aG docker codata
 
-# Ensure default {{cookiecutter.container_user}} user has access to /usr/local/share
+# Ensure default codata user has access to /usr/local/share
 RUN mkdir -p /usr/local/share && \
-  chown -R {{cookiecutter.container_user}}:{{cookiecutter.container_user}} /usr/local/share
+  chown -R codata:codata /usr/local/share
 
-ARG USERNAME={{cookiecutter.container_user}}
+ARG USERNAME=codata
 
 # Persist bash history.
 RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
@@ -81,12 +81,12 @@ RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhisto
 ENV DEVCONTAINER=true
 
 # Create workspace and config directories and set permissions
-RUN mkdir -p /workspace /home/{{cookiecutter.container_user}}/.claude && \
-  chown -R {{cookiecutter.container_user}}:{{cookiecutter.container_user}} /workspace /home/{{cookiecutter.container_user}}/.claude
+RUN mkdir -p /workspace /home/codata/.claude && \
+  chown -R codata:codata /workspace /home/codata/.claude
 
 WORKDIR /workspace
 
-ARG GIT_DELTA_VERSION={{cookiecutter.git_delta_version}}
+ARG GIT_DELTA_VERSION=0.18.2
 RUN ARCH=$(dpkg --print-architecture) && \
   wget "https://github.com/dandavison/delta/releases/download/${GIT_DELTA_VERSION}/git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
   sudo dpkg -i "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
@@ -96,10 +96,10 @@ RUN ARCH=$(dpkg --print-architecture) && \
 RUN pip install --no-cache-dir --upgrade pip
 
 # Set up non-root user
-USER {{cookiecutter.container_user}}
+USER codata
 
 # Set PATH to include poetry, pipx and local node binaries
-ENV PATH=/home/{{cookiecutter.container_user}}/.local/bin:$PATH
+ENV PATH=/home/codata/.local/bin:$PATH
 
 # Set the default shell to zsh rather than sh
 ENV SHELL=/bin/zsh
@@ -109,7 +109,7 @@ ENV EDITOR=vim
 ENV VISUAL=vim
 
 # Default powerline10k theme
-ARG ZSH_IN_DOCKER_VERSION={{cookiecutter.zsh_in_docker_version}}
+ARG ZSH_IN_DOCKER_VERSION=1.2.0
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
   -p git \
   -p fzf \
@@ -128,11 +128,12 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
     uv tool install poetry && \
     uv tool install pipx
 
-# Copy and set up firewall and docker scripts
+# Copy and set up firewall, docker and git scripts
 COPY init-firewall.sh /usr/local/bin/
 COPY init-docker.sh /usr/local/bin/
+COPY init-git.sh /usr/local/bin/init-git.sh
 USER root
-RUN chmod +x /usr/local/bin/init-firewall.sh /usr/local/bin/init-docker.sh && \
+RUN chmod +x /usr/local/bin/init-firewall.sh /usr/local/bin/init-docker.sh /usr/local/bin/init-git.sh && \
   echo "{{cookiecutter.container_user}} ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/{{cookiecutter.container_user}}-firewall && \
   echo "{{cookiecutter.container_user}} ALL=(root) NOPASSWD: /usr/local/bin/init-docker.sh" > /etc/sudoers.d/{{cookiecutter.container_user}}-docker && \
   chmod 0440 /etc/sudoers.d/{{cookiecutter.container_user}}-firewall /etc/sudoers.d/{{cookiecutter.container_user}}-docker
