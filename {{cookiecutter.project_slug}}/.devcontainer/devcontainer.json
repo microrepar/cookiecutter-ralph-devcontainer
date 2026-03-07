@@ -47,6 +47,8 @@
     "source=claude-code-config-${devcontainerId},target=/home/{{cookiecutter.container_user}}/.claude,type=volume"
   ],
   "containerEnv": {
+    "LC_ALL": "pt_BR.UTF-8",
+    "LANG": "pt_BR.UTF-8",
     "CLAUDE_CONFIG_DIR": "/home/{{cookiecutter.container_user}}/.claude",
     "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
     "PYTHONUNBUFFERED": "1"
