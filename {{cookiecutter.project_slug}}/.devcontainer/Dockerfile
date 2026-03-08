@@ -56,18 +56,18 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
   apt-get install -y nodejs && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# --- Create codata user ---
-RUN groupadd --gid 1000 codata \
-    && useradd --uid 1000 --gid codata --shell /bin/bash --create-home codata
+# --- Create {{cookiecutter.container_user}} user ---
+RUN groupadd --gid 1000 {{cookiecutter.container_user}} \
+    && useradd --uid 1000 --gid {{cookiecutter.container_user}} --shell /bin/bash --create-home {{cookiecutter.container_user}}
 
 # --- Configure docker group for Docker-in-Docker ---
 ARG DOCKER_GID=1001
 RUN groupadd --gid ${DOCKER_GID} docker || true \
-    && usermod -aG docker codata
+    && usermod -aG docker {{cookiecutter.container_user}}
 
-# Ensure default codata user has access to /usr/local/share
+# Ensure default {{cookiecutter.container_user}} user has access to /usr/local/share
 RUN mkdir -p /usr/local/share && \
-  chown -R codata:codata /usr/local/share
+  chown -R {{cookiecutter.container_user}}:{{cookiecutter.container_user}} /usr/local/share
 
 ARG USERNAME=codata
 
@@ -80,9 +80,9 @@ RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhisto
 # Set `DEVCONTAINER` environment variable to help with orientation
 ENV DEVCONTAINER=true
 
-# Create workspace and config directories and set permissions
-RUN mkdir -p /workspace /home/codata/.claude && \
-  chown -R codata:codata /workspace /home/codata/.claude
+# Create workspace, config and git directories and set permissions
+RUN mkdir -p /workspace /home/{{cookiecutter.container_user}}/.claude /git-storage && \
+  chown -R {{cookiecutter.container_user}}:{{cookiecutter.container_user}} /workspace /home/{{cookiecutter.container_user}}/.claude /git-storage
 
 WORKDIR /workspace
 
@@ -136,5 +136,6 @@ USER root
 RUN chmod +x /usr/local/bin/init-firewall.sh /usr/local/bin/init-docker.sh /usr/local/bin/init-git.sh && \
   echo "{{cookiecutter.container_user}} ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/{{cookiecutter.container_user}}-firewall && \
   echo "{{cookiecutter.container_user}} ALL=(root) NOPASSWD: /usr/local/bin/init-docker.sh" > /etc/sudoers.d/{{cookiecutter.container_user}}-docker && \
-  chmod 0440 /etc/sudoers.d/{{cookiecutter.container_user}}-firewall /etc/sudoers.d/{{cookiecutter.container_user}}-docker
+  echo "{{cookiecutter.container_user}} ALL=(root) NOPASSWD: /usr/local/bin/init-git.sh" > /etc/sudoers.d/{{cookiecutter.container_user}}-git && \
+  chmod 0440 /etc/sudoers.d/{{cookiecutter.container_user}}-firewall /etc/sudoers.d/{{cookiecutter.container_user}}-docker /etc/sudoers.d/{{cookiecutter.container_user}}-git
 USER {{cookiecutter.container_user}}

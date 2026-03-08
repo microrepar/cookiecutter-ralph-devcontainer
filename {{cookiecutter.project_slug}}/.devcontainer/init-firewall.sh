@@ -82,7 +82,9 @@ for domain in \
     "gitignore.io" \
     "toptal.com" \
     "z.ai" \
-    "api.z.ai"; do
+    "api.z.ai" \
+    "upstash.com" \
+    "api.upstash.com"; do
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')
     if [ -z "$ips" ]; then
