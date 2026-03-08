@@ -44,7 +44,8 @@
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
     "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
-    "source=claude-code-config-${devcontainerId},target=/home/{{cookiecutter.container_user}}/.claude,type=volume"
+    "source=claude-code-config-${devcontainerId},target=/home/{{cookiecutter.container_user}}/.claude,type=volume",
+    "source=claude-code-git-${devcontainerId},target=/git-storage,type=volume"
   ],
   "containerEnv": {
     "LC_ALL": "pt_BR.UTF-8",
@@ -55,6 +56,6 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
-  "postStartCommand": "sudo /usr/local/bin/init-docker.sh && sudo /usr/local/bin/init-firewall.sh && /usr/local/bin/init-git.sh",
+  "postStartCommand": "sudo /usr/local/bin/init-docker.sh && sudo /usr/local/bin/init-firewall.sh && sudo /usr/local/bin/init-git.sh",
   "waitFor": "postStartCommand"
 }
